@@ -240,3 +240,30 @@ class GoalRead(BaseModel):
     description: str | None
     created_at: datetime
     updated_at: datetime
+
+
+# --- Personal records (issue #11) ----------------------------------------
+
+
+class PRRead(BaseModel):
+    """One personal record, computed on read from logged entries."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    metric: str
+    value: float | None
+    achieved_on: date_type | None
+    session_id: int | None
+    entry_id: int | None
+
+
+# --- Per-exercise progress (issue #13) ---------------------------------
+
+
+class ProgressPointRead(BaseModel):
+    """One ``{date, value}`` point in a progress series."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    date: date_type
+    value: float
