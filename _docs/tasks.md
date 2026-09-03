@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#13 done. #14–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#13, #15, #16 done. #14, #17–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -110,14 +110,14 @@ local user for now. Keep the API surface unchanged. This isolates the future
 multi-user change to auth only. Add tests asserting rows are created with the
 owner id.
 
-## 15. Configure app settings, CORS, and error handling — groomed (#15)
+## 15. Configure app settings, CORS, and error handling — done (#15)
 Goal: The backend has centralized config and consistent error responses.
 Description: Add a typed settings object (env-driven: database URL, allowed
 origins, environment name), enable CORS for the frontend dev origin, and add an
 exception handler that returns a consistent JSON error shape for validation and
 not-found errors. Add tests for a CORS preflight and a 404 body.
 
-## 16. Build the frontend API client and shared types — groomed (#16)
+## 16. Build the frontend API client and shared types — done (#16)
 Goal: The frontend has one typed module for talking to the backend.
 Description: Create an API client wrapping fetch with base-URL config, error
 handling, and typed functions for the existing endpoints (exercises, sessions,
