@@ -28,7 +28,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
-from app.models import Exercise, ExerciseEntry, WorkoutSession
+from app.deps import current_user
+from app.models import Exercise, ExerciseEntry, User, WorkoutSession
 from app.schemas import (
     CARDIO_METRIC_FIELDS,
     SESSIONS_PAGE_SIZE_DEFAULT,
@@ -117,9 +118,11 @@ def _build_entry(session: Session, payload: EntryCreate, position: int) -> Exerc
     )
 
 
-def _load_session(session: Session, session_id: int) -> WorkoutSession:
+def _load_session(
+    session: Session, session_id: int, *, user_id: int | None = None
+) -> WorkoutSession:
     workout = session.get(WorkoutSession, session_id)
-    if workout is None:
+    if workout is None or (user_id is not None and workout.user_id != user_id):
         raise _not_found(f"session {session_id} not found")
     return workout
 
@@ -137,9 +140,13 @@ def _load_entry(
 
 @router.post("", response_model=SessionRead, status_code=status.HTTP_201_CREATED)
 def create_session(
-    payload: SessionCreate, session: Session = Depends(get_session)
+    payload: SessionCreate,
+    session: Session = Depends(get_session),
+    user: User = Depends(current_user),
 ) -> WorkoutSession:
-    workout = WorkoutSession(date=payload.date, notes=payload.notes)
+    workout = WorkoutSession(
+        date=payload.date, notes=payload.notes, user_id=user.id
+    )
     for position, entry_payload in enumerate(payload.entries):
         workout.entries.append(_build_entry(session, entry_payload, position))
     session.add(workout)
@@ -168,6 +175,7 @@ def _summarise(workout: WorkoutSession) -> SessionSummary:
 @router.get("", response_model=SessionList)
 def list_sessions(
     session: Session = Depends(get_session),
+    user: User = Depends(current_user),
     page: int = Query(1, ge=1),
     page_size: int = Query(
         SESSIONS_PAGE_SIZE_DEFAULT, ge=1, le=SESSIONS_PAGE_SIZE_MAX
@@ -186,7 +194,7 @@ def list_sessions(
     if start is not None and end is not None and start > end:
         raise _unprocessable("'start' must not be later than 'end'")
 
-    where = []
+    where = [WorkoutSession.user_id == user.id]
     if start is not None:
         where.append(WorkoutSession.date >= start)
     if end is not None:
@@ -222,9 +230,11 @@ def list_sessions(
 
 @router.get("/{session_id}", response_model=SessionRead)
 def get_session_by_id(
-    session_id: int, session: Session = Depends(get_session)
+    session_id: int,
+    session: Session = Depends(get_session),
+    user: User = Depends(current_user),
 ) -> WorkoutSession:
-    return _load_session(session, session_id)
+    return _load_session(session, session_id, user_id=user.id)
 
 
 @router.post(

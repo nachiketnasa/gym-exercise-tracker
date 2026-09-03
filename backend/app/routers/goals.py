@@ -22,8 +22,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
+from app.deps import current_user
 from app.metrics import ALL_METRICS, is_valid_metric, metrics_for_category
-from app.models import Exercise, Goal
+from app.models import Exercise, Goal, User
 from app.schemas import GoalCreate, GoalRead, GoalUpdate
 
 router = APIRouter(tags=["goals"])
@@ -44,9 +45,11 @@ def _load_exercise(session: Session, exercise_id: int) -> Exercise:
     return exercise
 
 
-def _load_goal(session: Session, goal_id: int) -> Goal:
+def _load_goal(
+    session: Session, goal_id: int, *, user_id: int | None = None
+) -> Goal:
     goal = session.get(Goal, goal_id)
-    if goal is None:
+    if goal is None or (user_id is not None and goal.user_id != user_id):
         raise _not_found(f"Goal {goal_id} not found")
     return goal
 
@@ -74,12 +77,14 @@ def create_goal(
     exercise_id: int,
     payload: GoalCreate,
     session: Session = Depends(get_session),
+    user: User = Depends(current_user),
 ) -> Goal:
     exercise = _load_exercise(session, exercise_id)
     _check_metric(payload.metric, exercise.category)
 
     goal = Goal(
         exercise_id=exercise_id,
+        user_id=user.id,
         metric=payload.metric,
         target_value=payload.target_value,
         unit=payload.unit,
@@ -97,21 +102,27 @@ def create_goal(
     tags=["exercises"],
 )
 def list_goals(
-    exercise_id: int, session: Session = Depends(get_session)
+    exercise_id: int,
+    session: Session = Depends(get_session),
+    user: User = Depends(current_user),
 ) -> list[Goal]:
     _load_exercise(session, exercise_id)
     return list(
         session.scalars(
             select(Goal)
-            .where(Goal.exercise_id == exercise_id)
+            .where(Goal.exercise_id == exercise_id, Goal.user_id == user.id)
             .order_by(Goal.created_at.desc(), Goal.id.desc())
         )
     )
 
 
 @router.get("/goals/{goal_id}", response_model=GoalRead)
-def get_goal(goal_id: int, session: Session = Depends(get_session)) -> Goal:
-    return _load_goal(session, goal_id)
+def get_goal(
+    goal_id: int,
+    session: Session = Depends(get_session),
+    user: User = Depends(current_user),
+) -> Goal:
+    return _load_goal(session, goal_id, user_id=user.id)
 
 
 @router.patch("/goals/{goal_id}", response_model=GoalRead)

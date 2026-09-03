@@ -53,6 +53,7 @@ def test_goals_table_has_the_expected_columns(db_session):
     columns = {c["name"] for c in inspect(db_session.bind).get_columns("goals")}
     assert columns == {
         "id",
+        "user_id",
         "exercise_id",
         "metric",
         "target_value",

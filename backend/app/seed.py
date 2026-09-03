@@ -48,6 +48,7 @@ from sqlalchemy.orm import Session  # noqa: E402
 
 from app.db import SessionLocal  # noqa: E402
 from app.models import Exercise  # noqa: E402
+from app.users import ensure_seed_user  # noqa: E402
 
 #: The preset exercise library, defined as data: 22 entries (4 ``cardio``, the
 #: rest ``strength``). The exact list is visible here on purpose.
@@ -113,6 +114,7 @@ def seed(session: Session) -> tuple[int, int]:
 def main() -> None:
     session = SessionLocal()
     try:
+        ensure_seed_user(session)
         inserted, already = seed(session)
     finally:
         session.close()
