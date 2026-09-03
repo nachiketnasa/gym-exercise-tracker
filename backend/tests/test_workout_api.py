@@ -396,4 +396,6 @@ def test_validation_errors_are_json_bodies(client):
     response = client.post("/sessions", json={"date": "not-a-date"})
     assert response.status_code == 422
     assert response.headers["content-type"].startswith("application/json")
-    assert "detail" in response.json()
+    body = response.json()
+    assert body["error"]["code"] == "validation_error"
+    assert isinstance(body["error"]["details"], list)
