@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#7 done. #8–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#8 done. #9–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -59,7 +59,7 @@ id, and create a custom exercise with validation on name and category. Cover the
 happy paths and validation errors with API tests. Assumes an `exercises` table
 and preset seed already exist.
 
-## 8. Define the Workout Session and Exercise Entry data models — groomed (#8)
+## 8. Define the Workout Session and Exercise Entry data models — done (#8)
 Goal: Tables exist to record a session and the exercises performed in it.
 Description: Model a Workout Session (date, optional notes, timestamps) and an
 Exercise Entry that links a session to an exercise and stores the metric fields —
