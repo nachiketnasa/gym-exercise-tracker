@@ -4,12 +4,16 @@ Scope and data model live in `_docs/plan.md`. Stack: FastAPI (Python) backend,
 React frontend, PostgreSQL database. Each task below is sized for one session and
 written to be picked up without reading the others.
 
-## 1. Initialize repository and backend skeleton with a passing test
+Tasks 1–22 are GitHub issues #1–#22. Follow-up issues filed during grooming are
+listed here with their issue number in the heading. Once an issue is groomed, its
+issue body (four-section template) is the source of truth — the entry here is
+just a summary.
+
+## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
-Description: Create the repo layout (`backend/`, `frontend/` placeholder, shared
-tooling config), add a FastAPI app exposing a single `GET /health` endpoint, and
-wire up pytest with one test that asserts `/health` returns 200. Include a README
-section describing how to install dependencies and run the test suite.
+Description: Created `backend/` as a uv-managed FastAPI project with a `GET /health`
+endpoint and a pytest suite containing one test that asserts `/health` returns
+200. README documents install/test/run; `frontend/` holds a placeholder.
 
 ## 2. Set up local PostgreSQL via Docker Compose
 Goal: One command brings up a Postgres instance for local development.
@@ -25,12 +29,13 @@ the database URL from the environment, and configure Alembic for migrations.
 Include an initial empty migration and a test that opens a connection and runs a
 trivial `SELECT 1` against a test database.
 
-## 4. Scaffold the React frontend with a passing test
+## 4. Scaffold the React frontend with a passing test — groomed (#4)
 Goal: A runnable, empty React app with one green test.
-Description: Create the `frontend/` project (Vite + React + TypeScript), a single
-placeholder page, and a test runner (Vitest + Testing Library) with one test that
-renders the app and asserts on visible text. Document install, dev-server, and
-test commands in the README.
+Description: Create the `frontend/` project from the Vite `react-ts` template
+(npm, committed lockfile, Node 20+), strip it to one placeholder page, and set up
+Vitest + Testing Library (jsdom, jest-dom) with one test that renders the root
+component and asserts on visible text. Update the README with install/dev/test/
+build commands. Full acceptance criteria and constraints are in issue #4.
 
 ## 5. Define the Exercise data model and migration
 Goal: An `exercises` table exists with the fields v1 needs.
@@ -159,3 +164,11 @@ Description: Add a CI workflow that provisions a Postgres service, installs
 backend and frontend dependencies, runs migrations, and executes pytest and the
 frontend tests. Fail the build on any failure and document the badge/status in
 the README.
+
+## 23. Frontend formatting and lint tooling (#24)
+Goal: Consistent, enforceable formatting and linting for the frontend.
+Description: Configure Prettier (committed config), review/keep the Vite ESLint
+config, and add `lint`, `format`, and `format:check` npm scripts that exit
+non-zero on failure, with all existing `frontend/` files passing. Document the
+commands in the README. Split out of task 4 during grooming; wiring into CI stays
+with task 22.
