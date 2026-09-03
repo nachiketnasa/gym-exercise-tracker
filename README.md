@@ -82,6 +82,23 @@ uv run alembic revision -m "add exercises table"
 uv run alembic revision --autogenerate -m "add exercises table"
 ```
 
+### Preset exercise library
+
+Once the schema is at `head`, load the built-in library of common exercises
+(each stored with `is_preset = true`):
+
+```sh
+cd backend
+uv run alembic upgrade head       # must run first
+uv run python -m app.seed         # insert any missing presets
+```
+
+The full list lives in `backend/app/seed.py`. The seed is idempotent: it
+matches presets by case-insensitive name, so re-running it inserts nothing,
+never duplicates or edits custom exercises, and re-inserts any preset that was
+manually deleted. It prints how many rows it inserted and how many already
+existed.
+
 ### Running the tests
 
 Tests need Postgres running (`docker compose up -d db` from the repo root) and
