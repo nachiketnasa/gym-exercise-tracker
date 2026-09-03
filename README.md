@@ -57,6 +57,17 @@ uv run fastapi dev app/main.py       # run the dev server (http://127.0.0.1:8000
 
 `GET /health` returns `{"status": "ok"}`.
 
+Interactive API docs (Swagger UI) are served at
+[`/docs`](http://127.0.0.1:8000/docs) once the dev server is running.
+
+### Exercise API
+
+| Method | Path               | Description                                             |
+| ------ | ------------------ | ------------------------------------------------------- |
+| GET    | `/exercises`       | List every exercise (presets + custom), ordered by name |
+| GET    | `/exercises/{id}`  | Fetch one exercise by id (404 if it does not exist)     |
+| POST   | `/exercises`       | Create a custom exercise (`name`, `category`); 409 on a duplicate name (case-insensitive), 422 on invalid input |
+
 ### Database layer
 
 The engine, `SessionLocal`, `get_session` dependency, and the declarative
