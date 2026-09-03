@@ -58,7 +58,9 @@ multi-user, Strava-like experience.
 - Flexibility/mobility tracking
 - Workout plans/templates
 
-## Open Question
-- Should goals/PRs track multiple metrics per exercise simultaneously
-  (e.g. both weight AND reps for bench press), or just one primary metric
-  per exercise?
+## Resolved Decisions
+- **PRs and goals track multiple metrics per exercise** (resolved 2026-09-03).
+  PR and goal records are keyed by (exercise, metric), so bench press can hold a
+  best weight, best reps, and best estimated 1RM at the same time, and a single
+  exercise can have more than one active goal. Progress series (#13) selects one
+  metric at a time.
