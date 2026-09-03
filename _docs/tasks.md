@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1 done, #2 done. #3–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#3 done. #4–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -24,7 +24,7 @@ sensible default credentials, and a mapped port. Document the connection string
 and the up/down commands in the README, and add a `.env.example` with the
 database URL variable the backend will read.
 
-## 3. Add database layer and migrations — groomed (#3)
+## 3. Add database layer and migrations — done (#3)
 Goal: The backend can connect to Postgres and apply schema migrations.
 Description: Add SQLAlchemy (or SQLModel) with a session/engine module that reads
 the database URL from the environment, and configure Alembic for migrations.
