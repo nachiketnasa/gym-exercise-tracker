@@ -36,6 +36,13 @@ postgresql://gym:gym@localhost:5432/gym_tracker
 
 The backend reads it from the `DATABASE_URL` environment variable.
 
+The test suite uses a separate `gym_tracker_test` database. It is created
+automatically the first time you run the tests; to create it by hand:
+
+```sh
+docker compose exec -T db psql -U gym -d gym_tracker -c "CREATE DATABASE gym_tracker_test;"
+```
+
 ## Backend
 
 All commands run from `backend/`.
@@ -49,6 +56,49 @@ uv run fastapi dev app/main.py       # run the dev server (http://127.0.0.1:8000
 ```
 
 `GET /health` returns `{"status": "ok"}`.
+
+### Database layer
+
+The engine, `SessionLocal`, `get_session` dependency, and the declarative
+`Base` live in `backend/app/db.py`. The connection URL comes entirely from the
+`DATABASE_URL` environment variable (see the root `.env` / `.env.example`);
+there is no hardcoded fallback, and an unset `DATABASE_URL` raises a clear
+error.
+
+Schema is managed with Alembic and applied to the dev database explicitly:
+
+```sh
+cd backend
+uv run alembic upgrade head          # apply migrations
+uv run alembic downgrade base        # roll them all back
+uv run alembic history               # list revisions
+```
+
+Add a new migration (edit its `upgrade()` / `downgrade()` afterwards):
+
+```sh
+uv run alembic revision -m "add exercises table"
+# or, once models exist, autogenerate from metadata:
+uv run alembic revision --autogenerate -m "add exercises table"
+```
+
+### Running the tests
+
+Tests need Postgres running (`docker compose up -d db` from the repo root) and
+a root `.env` with `DATABASE_URL` (`cp .env.example .env`).
+
+They run against a **separate** database — `gym_tracker_test` by default
+(the `DATABASE_URL` name plus a `_test` suffix), or `TEST_DATABASE_URL` if you
+set it in `.env`. That database is created and migrated to `head`
+automatically on first run, so nothing else is needed:
+
+```sh
+cd backend
+uv run pytest
+```
+
+Each test runs inside a transaction that is rolled back on teardown, so the
+test database stays empty between runs.
 
 ## Frontend
 
