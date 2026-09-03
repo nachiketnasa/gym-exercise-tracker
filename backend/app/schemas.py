@@ -191,3 +191,52 @@ class SessionList(BaseModel):
     page_size: int
     #: Total sessions matching the (optional) date filter, across all pages.
     total: int
+
+
+# --- Goals (issue #12) -----------------------------------------------------
+
+
+class GoalCreate(BaseModel):
+    """Input for ``POST /exercises/{exercise_id}/goals``.
+
+    ``target_value`` must be a positive number (zero, negative and non-numeric
+    are rejected here with 422). Whether ``metric`` is valid for the exercise's
+    category is checked in the router, where the ``Exercise`` row is available.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    metric: str
+    target_value: PositiveFloat
+    unit: str | None = None
+    description: str | None = None
+
+
+class GoalUpdate(BaseModel):
+    """Input for ``PATCH /goals/{id}``: every field is optional.
+
+    Only the fields present in the request body are applied. ``metric`` and
+    ``exercise_id`` are fixed once a goal is created and are not part of this
+    model.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    target_value: PositiveFloat | None = None
+    unit: str | None = None
+    description: str | None = None
+
+
+class GoalRead(BaseModel):
+    """One goal as returned by the API."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    exercise_id: int
+    metric: str
+    target_value: float
+    unit: str | None
+    description: str | None
+    created_at: datetime
+    updated_at: datetime
