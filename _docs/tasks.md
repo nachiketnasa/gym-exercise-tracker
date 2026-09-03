@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#4 done. #5–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#5 done. #6–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -39,7 +39,7 @@ Vitest + Testing Library (jsdom, jest-dom) with one test that renders the root
 component and asserts on visible text. Update the README with install/dev/test/
 build commands. Full acceptance criteria and constraints are in issue #4.
 
-## 5. Define the Exercise data model and migration — groomed (#5)
+## 5. Define the Exercise data model and migration — done (#5)
 Goal: An `exercises` table exists with the fields v1 needs.
 Description: Model an Exercise with name, category (`strength` or `cardio`), a
 flag for preset vs. custom, and timestamps. Write the Alembic migration and a
