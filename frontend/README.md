@@ -45,6 +45,16 @@ is identical at both sizes.
   offers retry). Clicking a row opens that session's detail in-screen
   (`getSession`, own loading/error/retry) showing date, notes, and every entry's
   category-appropriate metrics; a back button returns to the loaded list.
+- **Goals** (`/goals`) — lists every goal across exercises (loaded via
+  `listExercises` + `listGoals` per exercise), each shown as a human-readable
+  target with Edit / Delete controls; loading / empty / error+retry states. A
+  create/edit form with an exercise selector, a category-appropriate target
+  metric, a positive-number target value, unit, and an optional description
+  (`createGoal` / `updateGoal`); delete is confirmed (`deleteGoal`). An exercise
+  can have multiple goals. Failed create/edit/delete keeps state and shows an
+  error. Note: the #16 `CreateGoalInput` models one metric + target value per
+  goal, so multi-field targets (weight x reps) are expressed as separate goals
+  plus the free-text description.
 
 ## Requirements
 
