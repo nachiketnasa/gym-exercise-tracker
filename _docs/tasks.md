@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#21 done. #22 (CI) implemented, push blocked on `workflow` OAuth scope. Follow-ups open: #24, #26–#30.
+Status: #1–#22 done (full backlog). Follow-ups open: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -160,7 +160,7 @@ goal for an exercise (target metric values, e.g. weight x reps or a time for a
 distance). Add component tests with a mocked API client. Assumes the Goals API
 exists.
 
-## 22. Add CI running backend and frontend test suites — groomed (#22)
+## 22. Add CI running backend and frontend test suites — done (#22)
 Goal: Every push runs both test suites and reports pass/fail.
 Description: Add a CI workflow that provisions a Postgres service, installs
 backend and frontend dependencies, runs migrations, and executes pytest and the
