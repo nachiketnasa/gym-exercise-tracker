@@ -26,12 +26,41 @@ npm run build   # type-check with tsc and produce a production build in dist/
 `npm run preview` serves the built `dist/` locally, and `npm run lint` runs
 oxlint (both shipped by the Vite template).
 
+## Configuration
+
+| Env var             | Default                 | Purpose                     |
+| ------------------- | ----------------------- | --------------------------- |
+| `VITE_API_BASE_URL` | `http://localhost:8000` | Base URL of the backend API |
+
+Copy `.env.example` to `.env` (or `.env.local`) to override it. It is unset by
+default, so the client falls back to `http://localhost:8000`.
+
+## API client
+
+`src/api/` holds the typed backend client — a thin wrapper over the native
+`fetch` (no HTTP library):
+
+- `src/api/types.ts` — every request and response type. Types for endpoints
+  whose backend is not built yet are written against the documented contracts
+  and marked `provisional` in comments.
+- `src/api/client.ts` — one function per endpoint (exercises, sessions, history,
+  entries, PRs, goals, progress), plus `API_BASE_URL`, the `ApiError` type, and
+  `toQueryString`.
+- `src/api/client.test.ts` — tests with a mocked `fetch`.
+
+Every function returns a typed `Promise` and rejects with an `ApiError` on
+failure. `ApiError.kind` is `'network'` for a transport failure or `'http'` for
+a completed non-2xx response (which also carries `.status` and the parsed
+`.body`). Empty bodies (204) resolve without error.
+
 ## Layout
 
 - `src/main.tsx` — entry point, mounts `<App />`
 - `src/App.tsx` — the root component (placeholder page)
 - `src/App.test.tsx` — the one test: renders `<App />` and asserts on its text
 - `src/setupTests.ts` — registers `@testing-library/jest-dom` matchers
+- `src/api/` — the typed backend API client (see "API client" above)
+- `src/vite-env.d.ts` — Vite client types + `VITE_API_BASE_URL` typing
 - `vite.config.ts` — Vite + Vitest config (`jsdom` test environment)
 
 [Vite]: https://vite.dev/
