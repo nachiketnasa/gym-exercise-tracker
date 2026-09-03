@@ -163,3 +163,31 @@ class SessionRead(BaseModel):
     date: date_type
     notes: str | None
     entries: list[EntryRead]
+
+
+# --- Workout history / listing (issue #10) ----------------------------------
+
+#: Default and maximum ``page_size`` for ``GET /sessions``.
+SESSIONS_PAGE_SIZE_DEFAULT = 20
+SESSIONS_PAGE_SIZE_MAX = 100
+
+
+class SessionSummary(BaseModel):
+    """One session as it appears in the history list."""
+
+    id: int
+    date: date_type
+    #: Number of distinct exercises logged in the session.
+    exercise_count: int
+    #: Up to 3 exercise names, most entries first then name ascending.
+    primary_lifts: list[str]
+
+
+class SessionList(BaseModel):
+    """A page of :class:`SessionSummary` items plus pagination metadata."""
+
+    items: list[SessionSummary]
+    page: int
+    page_size: int
+    #: Total sessions matching the (optional) date filter, across all pages.
+    total: int
