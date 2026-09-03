@@ -55,6 +55,14 @@ is identical at both sizes.
   error. Note: the #16 `CreateGoalInput` models one metric + target value per
   goal, so multi-field targets (weight x reps) are expressed as separate goals
   plus the free-text description.
+- **Exercise Detail** (`/exercises/:exerciseId`) — header (name + category via
+  `getExercise`; unknown id -> not-found state). Three independently-loaded
+  sections, each with its own loading / error+retry: a **progress chart**
+  (`recharts` line chart) with a metric switcher that re-fetches
+  `getExerciseProgress` per metric (empty state for a metric with no points,
+  still renders with a single point); a **personal records** list
+  (`getExercisePersonalRecords`, empty state); and an **active goals** list
+  (`listGoals`, empty state) linking to the Goals screen.
 
 ## Requirements
 

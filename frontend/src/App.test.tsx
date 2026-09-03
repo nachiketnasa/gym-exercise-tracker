@@ -1,7 +1,21 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 import App from './App'
+
+// The screens fetch through the api client; stub it so routing tests never
+// touch the network. getExercise rejects with a 404 so the Exercise Detail
+// route lands on its not-found state (which still proves the route + param
+// resolved).
+vi.mock('./api/client', () => ({
+  listExercises: vi.fn().mockResolvedValue([]),
+  listSessions: vi.fn().mockResolvedValue({ items: [], page: 1, page_size: 20, total: 0 }),
+  listGoals: vi.fn().mockResolvedValue([]),
+  getExercise: vi.fn().mockRejectedValue(Object.assign(new Error('not found'), { status: 404 })),
+  getExercisePersonalRecords: vi.fn().mockResolvedValue([]),
+  getExerciseProgress: vi.fn().mockResolvedValue([]),
+  isApiError: (v: unknown) => v instanceof Error,
+}))
 
 function renderAt(path: string) {
   return render(
@@ -37,12 +51,10 @@ test('deep-linking to /goals renders the Goals screen', () => {
   expect(screen.getByRole('heading', { name: 'Goals' })).toBeInTheDocument()
 })
 
-test('the /exercises/:exerciseId route reads and shows the param', () => {
+test('the /exercises/:exerciseId route reads and shows the param', async () => {
   renderAt('/exercises/123')
-  expect(
-    screen.getByRole('heading', { name: 'Exercise Detail' }),
-  ).toBeInTheDocument()
-  expect(screen.getByText(/123/)).toBeInTheDocument()
+  // ExerciseDetail resolves the :exerciseId param and renders it
+  expect(await screen.findByText(/id 123/i)).toBeInTheDocument()
 })
 
 test('an unknown route renders the Not Found screen inside the layout', () => {
