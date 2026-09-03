@@ -5,8 +5,9 @@ x5" or "5k under 25min". An exercise may hold several goals at once, including
 more than one on the same metric, so there is no uniqueness constraint here.
 
 The allowed ``metric`` vocabulary lives in ``app.metrics`` and is enforced in
-the router (it depends on the linked exercise's category). Goals are not
-user-owned yet; ``user_id`` is added in #14.
+the router (it depends on the linked exercise's category). Goals are user-owned:
+``user_id`` is a non-null FK to ``users.id`` and defaults to the seeded local
+user (#14).
 """
 
 from __future__ import annotations
@@ -26,12 +27,19 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
+from app.users import SEED_USER_ID
 
 
 class Goal(Base):
     __tablename__ = "goals"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+        default=SEED_USER_ID,
+    )
     exercise_id: Mapped[int] = mapped_column(
         ForeignKey("exercises.id", ondelete="CASCADE"), nullable=False, index=True
     )
@@ -52,3 +60,4 @@ class Goal(Base):
     )
 
     exercise: Mapped["Exercise"] = relationship()  # noqa: F821
+    user: Mapped["User"] = relationship()  # noqa: F821

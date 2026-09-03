@@ -9,9 +9,9 @@ metric columns (``duration_seconds`` / ``distance_meters`` /
 which ones are set to the linked exercise's category — that validation lives in
 the logging API (#9).
 
-Workout sessions are user-owned, but the owner ``user_id`` column is added
-later in #14, not here (see the project scope). Nothing in these models should
-make adding it hard.
+Workout sessions are user-owned: ``user_id`` is a non-null foreign key to
+``users.id`` (#14). It defaults to the seeded local user so callers that do not
+name an owner still get a valid row while the app is single-user.
 """
 
 from __future__ import annotations
@@ -34,6 +34,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
+from app.users import SEED_USER_ID
 
 #: The units ``weight`` may be recorded in. Enforced in the database by the
 #: ``ck_exercise_entries_weight_unit`` CHECK constraint (see the migration).
@@ -43,12 +44,19 @@ WEIGHT_UNITS: tuple[str, ...] = ("kg", "lb")
 class WorkoutSession(Base):
     """A workout done on a given date.
 
-    The owner ``user_id`` column is added in #14, not here.
+    ``user_id`` is a non-null FK to ``users.id`` and defaults to the seeded
+    local user (#14).
     """
 
     __tablename__ = "workout_sessions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+        default=SEED_USER_ID,
+    )
     date: Mapped[date_type] = mapped_column(Date, nullable=False)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
@@ -70,6 +78,8 @@ class WorkoutSession(Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+
+    user: Mapped["User"] = relationship()  # noqa: F821
 
 
 class ExerciseEntry(Base):
