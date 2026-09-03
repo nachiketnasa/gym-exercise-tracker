@@ -7,6 +7,10 @@ from alembic import context
 
 from app.db import DATABASE_URL, Base
 
+# Import the models package so every model is registered on Base.metadata
+# before autogenerate compares it against the database.
+import app.models  # noqa: F401
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
