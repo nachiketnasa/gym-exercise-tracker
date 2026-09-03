@@ -179,8 +179,12 @@ is a later change (#27); only `current_user` has to change, not its call sites.
 ## Frontend
 
 React (Vite + TypeScript) app under `frontend/`, tested with Vitest + Testing
-Library. It has a typed backend API client (`frontend/src/api/`). All commands
-run from `frontend/` (needs Node 20 LTS or newer — see `frontend/.nvmrc`):
+Library. It has a typed backend API client (`frontend/src/api/`), client-side
+routing (`react-router-dom`) with a responsive nav shell, and screens for
+logging workouts, history, exercise detail, and goals. Routes and the responsive
+breakpoint are documented in [`frontend/README.md`](frontend/README.md). All
+commands run from `frontend/` (needs Node 20 LTS or newer — see
+`frontend/.nvmrc`):
 
 ```sh
 cd frontend

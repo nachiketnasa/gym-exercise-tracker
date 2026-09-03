@@ -3,8 +3,31 @@
 The Gym Exercise Tracker web client: React + TypeScript, built with [Vite],
 tested with [Vitest] + [Testing Library].
 
-This is the app shell only — a single placeholder page. Navigation and the
-product screens are added in later tasks (see [`../_docs/tasks.md`](../_docs/tasks.md)).
+Navigation shell plus product screens (see [`../_docs/tasks.md`](../_docs/tasks.md)).
+
+## Routing & layout
+
+Client-side routing uses `react-router-dom`. Routes:
+
+| Path                      | Screen          |
+| ------------------------- | --------------- |
+| `/`                       | Log Workout     |
+| `/history`                | History         |
+| `/exercises/:exerciseId`  | Exercise Detail |
+| `/goals`                  | Goals           |
+| anything else             | Not Found       |
+
+`src/layout/Layout.tsx` is the persistent frame (header + primary nav) that
+wraps every route via `<Outlet />`. The active nav item is marked with
+`aria-current="page"` (via `NavLink`).
+
+Responsive nav: the breakpoint is **768px**. At >= 768px the nav is a normal
+horizontal nav in the header; below 768px it renders as a **fixed bottom nav
+bar**. Only CSS (a media query in `src/layout/Layout.css`) changes — the markup
+is identical at both sizes.
+
+`<BrowserRouter>` wraps `<App />` in `src/main.tsx`; tests wrap `<App />` in
+`<MemoryRouter>`.
 
 ## Requirements
 
@@ -55,10 +78,14 @@ a completed non-2xx response (which also carries `.status` and the parsed
 
 ## Layout
 
-- `src/main.tsx` — entry point, mounts `<App />`
-- `src/App.tsx` — the root component (placeholder page)
-- `src/App.test.tsx` — the one test: renders `<App />` and asserts on its text
-- `src/setupTests.ts` — registers `@testing-library/jest-dom` matchers
+- `src/main.tsx` — entry point, mounts `<App />` inside `<BrowserRouter>`
+- `src/App.tsx` — the route table
+- `src/App.test.tsx` — routing/nav tests
+- `src/layout/` — the persistent layout (`Layout.tsx`, `Layout.css`)
+- `src/screens/` — one component per screen (`LogWorkout`, `History`,
+  `ExerciseDetail`, `Goals`, `NotFound`) plus co-located `*.test.tsx`
+- `src/setupTests.ts` — registers `@testing-library/jest-dom` matchers and
+  Testing Library's per-test cleanup
 - `src/api/` — the typed backend API client (see "API client" above)
 - `src/vite-env.d.ts` — Vite client types + `VITE_API_BASE_URL` typing
 - `vite.config.ts` — Vite + Vitest config (`jsdom` test environment)
