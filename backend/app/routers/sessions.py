@@ -21,19 +21,26 @@ because they need the ``Exercise`` row. The minimum required set is:
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from datetime import date as date_type
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db import get_session
 from app.models import Exercise, ExerciseEntry, WorkoutSession
 from app.schemas import (
     CARDIO_METRIC_FIELDS,
+    SESSIONS_PAGE_SIZE_DEFAULT,
+    SESSIONS_PAGE_SIZE_MAX,
     STRENGTH_METRIC_FIELDS,
     EntryCreate,
     EntryRead,
     EntryUpdate,
     SessionCreate,
+    SessionList,
     SessionRead,
+    SessionSummary,
 )
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
@@ -139,6 +146,78 @@ def create_session(
     session.commit()
     session.refresh(workout)
     return workout
+
+
+def _summarise(workout: WorkoutSession) -> SessionSummary:
+    """Build the history summary for one session from its loaded entries."""
+    # exercise_id -> [entry count, exercise name]
+    tally: dict[int, list] = {}
+    for entry in workout.entries:
+        slot = tally.setdefault(entry.exercise_id, [0, entry.exercise.name])
+        slot[0] += 1
+    # Most entries first, then name ascending; take the top 3 names.
+    ordered = sorted(tally.values(), key=lambda pair: (-pair[0], pair[1]))
+    return SessionSummary(
+        id=workout.id,
+        date=workout.date,
+        exercise_count=len(tally),
+        primary_lifts=[name for _count, name in ordered[:3]],
+    )
+
+
+@router.get("", response_model=SessionList)
+def list_sessions(
+    session: Session = Depends(get_session),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(
+        SESSIONS_PAGE_SIZE_DEFAULT, ge=1, le=SESSIONS_PAGE_SIZE_MAX
+    ),
+    start: date_type | None = Query(None),
+    end: date_type | None = Query(None),
+) -> SessionList:
+    """Paginated workout history, newest first, each item a short summary.
+
+    ``page`` defaults to 1 and ``page_size`` to
+    ``SESSIONS_PAGE_SIZE_DEFAULT`` (20), capped at ``SESSIONS_PAGE_SIZE_MAX``
+    (100). ``start``/``end`` (ISO ``YYYY-MM-DD``) filter by session date,
+    inclusive on both ends and each usable alone. Malformed dates are rejected
+    by FastAPI with 422; ``start`` later than ``end`` is rejected below.
+    """
+    if start is not None and end is not None and start > end:
+        raise _unprocessable("'start' must not be later than 'end'")
+
+    where = []
+    if start is not None:
+        where.append(WorkoutSession.date >= start)
+    if end is not None:
+        where.append(WorkoutSession.date <= end)
+
+    total = session.scalar(
+        select(func.count()).select_from(WorkoutSession).where(*where)
+    )
+
+    workouts = (
+        session.scalars(
+            select(WorkoutSession)
+            .where(*where)
+            .order_by(
+                WorkoutSession.date.desc(),
+                WorkoutSession.created_at.desc(),
+                WorkoutSession.id.desc(),
+            )
+            .limit(page_size)
+            .offset((page - 1) * page_size)
+        )
+        .unique()
+        .all()
+    )
+
+    return SessionList(
+        items=[_summarise(w) for w in workouts],
+        page=page,
+        page_size=page_size,
+        total=total or 0,
+    )
 
 
 @router.get("/{session_id}", response_model=SessionRead)
