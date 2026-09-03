@@ -25,6 +25,9 @@ A generic handler for unhandled 500s is deliberately out of scope here (#28).
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -33,11 +36,25 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
+from app.db import SessionLocal
 from app.routers import analytics, exercises, goals, sessions
+from app.users import ensure_seed_user
 
 settings = get_settings()
 
-app = FastAPI(title="Gym Exercise Tracker API")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Make sure the single local user exists (issue #14, single-user stub)."""
+    session = SessionLocal()
+    try:
+        ensure_seed_user(session)
+    finally:
+        session.close()
+    yield
+
+
+app = FastAPI(title="Gym Exercise Tracker API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
