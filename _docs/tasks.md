@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#5 done. #6–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#6 done. #7–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -45,7 +45,7 @@ Description: Model an Exercise with name, category (`strength` or `cardio`), a
 flag for preset vs. custom, and timestamps. Write the Alembic migration and a
 model-level test that creates and reads back an exercise of each category.
 
-## 6. Seed the preset exercise library — groomed (#6)
+## 6. Seed the preset exercise library — done (#6)
 Goal: A known set of common exercises is loaded into the database.
 Description: Create a seed script (or data migration) that inserts ~15–25 common
 exercises (e.g. bench press, squat, deadlift, running, cycling) tagged as
