@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#6 done. #7–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#7 done. #8–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -52,7 +52,7 @@ exercises (e.g. bench press, squat, deadlift, running, cycling) tagged as
 presets, each with the correct category. Make the seed idempotent and add a test
 that asserts the expected presets are present after running it.
 
-## 7. Build the Exercise API — groomed (#7)
+## 7. Build the Exercise API — done (#7)
 Goal: Clients can list exercises and create custom ones.
 Description: Add endpoints to list all exercises (presets + custom), fetch one by
 id, and create a custom exercise with validation on name and category. Cover the
