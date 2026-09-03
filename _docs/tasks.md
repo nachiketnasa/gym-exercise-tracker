@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#13, #15, #16 done. #14, #17–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#21 done. #22 (CI) implemented, push blocked on `workflow` OAuth scope. Follow-ups open: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -102,7 +102,7 @@ ordered series of `(date, value)` points derived from logged entries, suitable
 for charting. Support selecting which metric and an optional date range. Cover
 with API tests over fixture data.
 
-## 14. Add single-user scoping stub — groomed (#14)
+## 14. Add single-user scoping stub — done (#14)
 Goal: Every user-owned row carries an owner id, defaulted to a single local user.
 Description: Add a `user_id` column to sessions, goals, and any other user-owned
 tables, plus a dependency that resolves the "current user" to a single seeded
@@ -124,14 +124,14 @@ handling, and typed functions for the existing endpoints (exercises, sessions,
 history, PRs, goals, progress). Define the request/response types in one place.
 Add tests using a mocked fetch. Assumes the backend endpoints exist.
 
-## 17. Build the app navigation shell and responsive layout — groomed (#17)
+## 17. Build the app navigation shell and responsive layout — done (#17)
 Goal: A mobile-friendly frame with routing between the four core screens.
 Description: Add routing and a responsive layout (bottom nav or hamburger on
 small screens) with placeholder routes for Log Workout, History, Exercise Detail,
 and Goals. No data yet — just navigation and layout. Add a test that navigating
 changes the visible screen.
 
-## 18. Build the Log Workout screen — groomed (#18)
+## 18. Build the Log Workout screen — done (#18)
 Goal: A user can record a workout from the UI, live or after the fact.
 Description: Build a screen to pick an exercise (from the preset/custom list or
 add custom inline), enter the metric fields appropriate to its category, add
@@ -139,21 +139,21 @@ multiple exercises to the session, and save. Handle both starting an empty
 session and entering a completed one. Add component tests with a mocked API
 client.
 
-## 19. Build the History screen — groomed (#19)
+## 19. Build the History screen — done (#19)
 Goal: A user can browse and open past workout sessions.
 Description: Build a reverse-chronological list of past sessions showing date and
 a summary, with pagination or infinite scroll, and tapping a session shows its
 full details. Add component tests with a mocked API client. Assumes the history
 and session-detail endpoints exist.
 
-## 20. Build the Exercise Detail screen — groomed (#20)
+## 20. Build the Exercise Detail screen — done (#20)
 Goal: A user can see progress, PR, and goal for one exercise.
 Description: Build a screen showing a progress chart for a selected metric, the
 current PR(s), and the active goal for that exercise, with a control to switch
 metrics. Use a charting library for the trend line. Add component tests with a
 mocked API client. Assumes the progress, PR, and goal endpoints exist.
 
-## 21. Build the Goals screen — groomed (#21)
+## 21. Build the Goals screen — done (#21)
 Goal: A user can set and edit target values per exercise.
 Description: Build a screen listing existing goals and a form to create or edit a
 goal for an exercise (target metric values, e.g. weight x reps or a time for a
