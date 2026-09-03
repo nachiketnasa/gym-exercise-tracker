@@ -38,6 +38,13 @@ is identical at both sizes.
   entries, client-side positive-number validation, then save the whole session
   in one `createSession` call. On success the form resets to a new empty
   session; on failure the entered data is kept for retry.
+- **History** (`/history`) — reverse-chronological list of past sessions (date +
+  exercise count + primary lifts) via `listSessions`, with loading / empty /
+  error states and **"Load more" pagination** (20/page, appends without
+  duplicates, stops at the last page; a failed page keeps loaded rows and
+  offers retry). Clicking a row opens that session's detail in-screen
+  (`getSession`, own loading/error/retry) showing date, notes, and every entry's
+  category-appropriate metrics; a back button returns to the loaded list.
 
 ## Requirements
 
