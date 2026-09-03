@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#8 done. #9–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#9 done. #10–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -67,7 +67,7 @@ strength: sets/reps/weight/unit; cardio: duration/distance/pace. Write the
 migration and model tests that create a session with one strength entry and one
 cardio entry.
 
-## 9. Build the Workout logging API — groomed (#9)
+## 9. Build the Workout logging API — done (#9)
 Goal: Clients can create a workout session and record exercise entries.
 Description: Add endpoints to create a session, add/update/remove entries on it,
 and fetch a full session by id. Support both live logging (create empty, append
