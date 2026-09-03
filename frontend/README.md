@@ -29,6 +29,16 @@ is identical at both sizes.
 `<BrowserRouter>` wraps `<App />` in `src/main.tsx`; tests wrap `<App />` in
 `<MemoryRouter>`.
 
+### Screens
+
+- **Log Workout** (`/`) — build a session: editable date (defaults to today) and
+  notes, a searchable exercise picker (presets + custom, with inline
+  custom-exercise creation), category-appropriate metric inputs (strength:
+  sets/reps/weight/unit; cardio: duration/distance/pace), add/remove multiple
+  entries, client-side positive-number validation, then save the whole session
+  in one `createSession` call. On success the form resets to a new empty
+  session; on failure the entered data is kept for retry.
+
 ## Requirements
 
 - Node 20 LTS or newer (`.nvmrc` pins the version used here; also enforced by
