@@ -6,5 +6,6 @@ that).
 """
 
 from app.models.exercise import Exercise
+from app.models.workout import ExerciseEntry, WorkoutSession
 
-__all__ = ["Exercise"]
+__all__ = ["Exercise", "ExerciseEntry", "WorkoutSession"]
