@@ -12,7 +12,7 @@ records, and goals. Single-user for v1, designed to scale to multi-user later.
 | Layer    | Tech                                             |
 | -------- | ----------------------------------------------- |
 | Backend  | FastAPI (Python 3.12), managed with [uv]        |
-| Frontend | React (Vite + TypeScript) — not scaffolded yet  |
+| Frontend | React (Vite + TypeScript), tested with Vitest    |
 | Database | PostgreSQL 16 (local via Docker Compose)        |
 
 [uv]: https://docs.astral.sh/uv/
@@ -102,4 +102,16 @@ test database stays empty between runs.
 
 ## Frontend
 
-Not yet scaffolded — see task 4 in the backlog.
+React (Vite + TypeScript) app under `frontend/`. Currently the app shell only:
+a single placeholder page with a passing Vitest + Testing Library test. All
+commands run from `frontend/` (needs Node 20 LTS or newer — see `frontend/.nvmrc`):
+
+```sh
+cd frontend
+npm install       # install dependencies
+npm run dev       # start the Vite dev server (http://localhost:5173)
+npm test          # run the Vitest suite once (non-watch) and exit
+npm run build     # type-check and produce a production build in dist/
+```
+
+See [`frontend/README.md`](frontend/README.md) for details.
