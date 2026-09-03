@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#3 done. #4–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#4 done. #5–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -31,7 +31,7 @@ the database URL from the environment, and configure Alembic for migrations.
 Include an initial empty migration and a test that opens a connection and runs a
 trivial `SELECT 1` against a test database.
 
-## 4. Scaffold the React frontend with a passing test — groomed (#4)
+## 4. Scaffold the React frontend with a passing test — done (#4)
 Goal: A runnable, empty React app with one green test.
 Description: Create the `frontend/` project from the Vite `react-ts` template
 (npm, committed lockfile, Node 20+), strip it to one placeholder page, and set up
