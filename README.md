@@ -155,6 +155,27 @@ uv run pytest
 Each test runs inside a transaction that is rolled back on teardown, so the
 test database stays empty between runs.
 
+### Single-user (for now)
+
+The backend is **single-user**: there is exactly one user and every user-owned
+row belongs to it. A `users` table exists and `workout_sessions` and `goals`
+each carry a non-null `user_id` foreign key to it (the shared exercise library
+and exercise entries are not user-scoped). A `current_user` FastAPI dependency
+(`backend/app/deps.py`) resolves to that one user and is injected wherever
+user-owned rows are created or listed.
+
+The local user (`local@example.com`, id `1` — see `backend/app/users.py`,
+`SEED_USER`) is seeded three ways, all idempotent:
+
+- the Alembic migration that adds the `users` table inserts it, so a freshly
+  migrated database already has it;
+- `uv run python -m app.seed` calls `ensure_seed_user()` before seeding the
+  presets;
+- the API creates it on startup if it is missing.
+
+Real authentication (login, tokens, resolving `current_user` from the request)
+is a later change (#27); only `current_user` has to change, not its call sites.
+
 ## Frontend
 
 React (Vite + TypeScript) app under `frontend/`, tested with Vitest + Testing
