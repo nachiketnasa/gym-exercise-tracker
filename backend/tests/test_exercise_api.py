@@ -104,7 +104,13 @@ def test_get_by_id_returns_404_with_json_body_for_unknown_id(client):
 
     assert response.status_code == 404
     assert response.headers["content-type"].startswith("application/json")
-    assert response.json() == {"detail": "Exercise 999999 not found"}
+    assert response.json() == {
+        "error": {
+            "code": "not_found",
+            "message": "Exercise 999999 not found",
+            "details": None,
+        }
+    }
 
 
 # --- POST /exercises --------------------------------------------------------
@@ -188,7 +194,7 @@ def test_create_duplicate_custom_name_case_insensitive_returns_409_json(
 
     assert response.status_code == 409
     assert response.headers["content-type"].startswith("application/json")
-    assert "detail" in response.json()
+    assert response.json()["error"]["code"] == "conflict"
 
 
 def test_create_duplicate_preset_name_case_insensitive_returns_409_json(
@@ -199,7 +205,7 @@ def test_create_duplicate_preset_name_case_insensitive_returns_409_json(
     )
 
     assert response.status_code == 409
-    assert "detail" in response.json()
+    assert response.json()["error"]["code"] == "conflict"
 
 
 def test_create_ignores_client_supplied_id_is_preset_and_timestamps(

@@ -60,6 +60,33 @@ uv run fastapi dev app/main.py       # run the dev server (http://127.0.0.1:8000
 Interactive API docs (Swagger UI) are served at
 [`/docs`](http://127.0.0.1:8000/docs) once the dev server is running.
 
+### Configuration, CORS, and error shape
+
+All backend configuration is read from the environment (and a local `.env`)
+through one typed settings object in `backend/app/config.py`
+(`pydantic-settings`). Use `get_settings()` for the cached instance. Fields:
+
+| Field          | Env var         | Default                     | Notes |
+| -------------- | --------------- | --------------------------- | ----- |
+| `database_url` | `DATABASE_URL`  | none (required)             | Unset ⇒ startup fails with an error naming `DATABASE_URL` |
+| `cors_origins` | `CORS_ORIGINS`  | `["http://localhost:5173"]` | Override with a comma-separated list or a JSON array |
+| `environment`  | `ENVIRONMENT`   | `local`                     | e.g. `local` / `dev` / `prod` |
+
+Every variable is listed in `backend/.env.example`.
+
+`CORSMiddleware` is installed from `settings.cors_origins` (credentials allowed,
+common methods and all headers), so the Vite dev server at
+`http://localhost:5173` can call the API.
+
+Handled error responses (currently 404 and 422) share one JSON envelope:
+
+```json
+{"error": {"code": "not_found", "message": "…", "details": null}}
+```
+
+`code` is a stable string (`not_found`, `validation_error`, `conflict`, …).
+For a `422` validation error, `details` is the list of per-field errors.
+
 ### Exercise API
 
 | Method | Path               | Description                                             |
@@ -130,9 +157,9 @@ test database stays empty between runs.
 
 ## Frontend
 
-React (Vite + TypeScript) app under `frontend/`. Currently the app shell only:
-a single placeholder page with a passing Vitest + Testing Library test. All
-commands run from `frontend/` (needs Node 20 LTS or newer — see `frontend/.nvmrc`):
+React (Vite + TypeScript) app under `frontend/`, tested with Vitest + Testing
+Library. It has a typed backend API client (`frontend/src/api/`). All commands
+run from `frontend/` (needs Node 20 LTS or newer — see `frontend/.nvmrc`):
 
 ```sh
 cd frontend
@@ -141,5 +168,8 @@ npm run dev       # start the Vite dev server (http://localhost:5173)
 npm test          # run the Vitest suite once (non-watch) and exit
 npm run build     # type-check and produce a production build in dist/
 ```
+
+The client reads the backend base URL from the `VITE_API_BASE_URL` env var
+(see `frontend/.env.example`), falling back to `http://localhost:8000`.
 
 See [`frontend/README.md`](frontend/README.md) for details.
