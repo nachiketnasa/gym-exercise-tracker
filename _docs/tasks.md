@@ -9,7 +9,7 @@ listed here (tasks 23+) with their issue number in the heading. Once an issue is
 groomed, its issue body (four-section template) is the source of truth — the
 entry here is just a summary.
 
-Status: #1–#9 done. #10–#22 groomed. Grooming follow-ups: #24, #26–#30.
+Status: #1–#13 done. #14–#22 groomed. Grooming follow-ups: #24, #26–#30.
 
 ## 1. Initialize repository and backend skeleton with a passing test — done (#1)
 Goal: A runnable, empty FastAPI project with one green test.
@@ -74,14 +74,14 @@ and fetch a full session by id. Support both live logging (create empty, append
 entries) and after-the-fact entry (create with entries in one request). Cover
 with API tests. Assumes the session and entry models exist.
 
-## 10. Build the Workout history API — groomed (#10)
+## 10. Build the Workout history API — done (#10)
 Goal: Clients can retrieve past sessions in reverse-chronological order.
 Description: Add a paginated list endpoint returning session summaries (date,
 exercise count, primary lifts) newest-first, with optional date-range filtering.
 Add API tests for ordering, pagination, and filtering. Assumes workout sessions
 can already be created.
 
-## 11. Implement personal record (PR) auto-calculation — groomed (#11)
+## 11. Implement personal record (PR) auto-calculation — done (#11)
 Goal: The system derives best values per exercise, per metric, from logged data.
 Description: Add logic that computes PRs (e.g. max weight, max reps at a weight,
 best pace, longest distance) from a user's exercise entries, plus an endpoint to
@@ -89,13 +89,13 @@ fetch PRs for a given exercise. Per the resolved decision in `plan.md`, PRs trac
 multiple metrics per exercise, keyed by (exercise, metric). Cover the calculation
 with unit tests over fixture data.
 
-## 12. Define the Goal data model and build the Goals API — groomed (#12)
+## 12. Define the Goal data model and build the Goals API — done (#12)
 Goal: Clients can set, edit, and list target values per exercise.
 Description: Model a Goal as one or more target metric values tied to an exercise
 (e.g. "bench 200lb x5", "5k under 25min"), with timestamps. Add CRUD endpoints
 and API tests. Assumes the `exercises` table exists.
 
-## 13. Build the per-exercise progress API — groomed (#13)
+## 13. Build the per-exercise progress API — done (#13)
 Goal: Clients can get a time series of a metric for one exercise.
 Description: Add an endpoint that returns, for a given exercise and metric, an
 ordered series of `(date, value)` points derived from logged entries, suitable
