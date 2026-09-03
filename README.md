@@ -1,7 +1,23 @@
 # Gym Exercise Tracker
 
+[![CI](https://github.com/nachiketnasa/gym-exercise-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/nachiketnasa/gym-exercise-tracker/actions/workflows/ci.yml)
+
 Responsive web app for tracking gym workouts — logging, progress charts, personal
 records, and goals. Single-user for v1, designed to scale to multi-user later.
+
+## Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push and
+pull request, as two independent jobs (the workflow is red if either is):
+
+- **Backend** — starts a PostgreSQL 16 service, `uv sync`, applies the Alembic
+  migrations against the CI database, then runs `uv run pytest`.
+- **Frontend** — `npm ci`, then `npm run lint` (oxlint), `npm test` (Vitest,
+  non-watch), and `npm run build`.
+
+Dependency caches are configured for uv and npm. No secrets are needed — the CI
+`DATABASE_URL` is defined in the workflow. (A `format:check` step will be added
+to the frontend job once the formatter lands in #24.)
 
 - Product scope: [`_docs/plan.md`](_docs/plan.md)
 - Task backlog: [`_docs/tasks.md`](_docs/tasks.md) (mirrored to GitHub issues)
