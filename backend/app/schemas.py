@@ -7,10 +7,19 @@ caller is allowed to set.
 
 from __future__ import annotations
 
+from datetime import date as date_type
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PositiveFloat,
+    PositiveInt,
+    StringConstraints,
+    model_validator,
+)
 
 #: A name is trimmed of surrounding whitespace first, then must be 1-100
 #: characters. A whitespace-only name therefore fails (it trims to "").
@@ -45,3 +54,112 @@ class ExerciseRead(BaseModel):
     is_preset: bool
     created_at: datetime
     updated_at: datetime
+
+
+# --- Workout logging (issue #9) ----------------------------------------------
+
+#: Metric fields that belong to a strength exercise.
+STRENGTH_METRIC_FIELDS: tuple[str, ...] = ("sets", "reps", "weight", "weight_unit")
+#: Metric fields that belong to a cardio exercise.
+CARDIO_METRIC_FIELDS: tuple[str, ...] = (
+    "duration_seconds",
+    "distance_meters",
+    "pace_seconds_per_km",
+)
+
+WeightUnit = Literal["kg", "lb"]
+
+
+class EntryCreate(BaseModel):
+    """Input for creating one exercise entry.
+
+    Non-positive numbers are rejected here (422); the cross-field checks that
+    depend on the exercise's category (wrong-category fields, missing required
+    fields, unknown ``exercise_id``) are done in the router where the DB is
+    available.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    exercise_id: int
+
+    # Strength metrics.
+    sets: PositiveInt | None = None
+    reps: PositiveInt | None = None
+    weight: PositiveFloat | None = None
+    weight_unit: WeightUnit | None = None
+
+    # Cardio metrics.
+    duration_seconds: PositiveInt | None = None
+    distance_meters: PositiveFloat | None = None
+    pace_seconds_per_km: PositiveFloat | None = None
+
+
+class EntryUpdate(BaseModel):
+    """Input for ``PATCH`` on an entry: every metric field is optional.
+
+    Only the fields present in the request body are applied. ``exercise_id`` is
+    fixed once an entry is created and is not part of this model.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    sets: PositiveInt | None = None
+    reps: PositiveInt | None = None
+    weight: PositiveFloat | None = None
+    weight_unit: WeightUnit | None = None
+
+    duration_seconds: PositiveInt | None = None
+    distance_meters: PositiveFloat | None = None
+    pace_seconds_per_km: PositiveFloat | None = None
+
+
+class EntryRead(BaseModel):
+    """One exercise entry as returned by the API."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    exercise_id: int
+    position: int
+
+    sets: int | None
+    reps: int | None
+    weight: float | None
+    weight_unit: str | None
+
+    duration_seconds: int | None
+    distance_meters: float | None
+    pace_seconds_per_km: float | None
+
+
+class SessionCreate(BaseModel):
+    """Input for ``POST /sessions``.
+
+    ``date`` defaults to today when omitted and must not be in the future.
+    ``entries`` may be omitted (empty session) or carry the full list to
+    create in one request.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    date: date_type = Field(default_factory=date_type.today)
+    notes: str | None = None
+    entries: list[EntryCreate] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _reject_future_date(self) -> SessionCreate:
+        if self.date > date_type.today():
+            raise ValueError("date must not be in the future")
+        return self
+
+
+class SessionRead(BaseModel):
+    """A workout session with its ordered entries."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    date: date_type
+    notes: str | None
+    entries: list[EntryRead]
